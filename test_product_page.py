@@ -2,6 +2,7 @@ import pytest
 from .pages.product_page import ProductPage
 
 link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207"
+
 list_of_failed_num = [7]
 tested_links = [f"{link}?promo=offer{i}" if i not in list_of_failed_num else
                 pytest.param(f"{link}?promo=offer{i}",
@@ -19,3 +20,22 @@ def test_guest_can_add_product_to_cart(browser, link):
     page.success_add_message_should_be_present()
     page.should_be_product_name_in_cart()
     page.cart_total_should_equal_product_price()
+
+@pytest.mark.xfail
+def test_guest_cant_see_success_message_after_adding_product_to_cart(browser):
+    page = ProductPage(browser, link)
+    page.open()
+    page.add_product_to_cart()
+    page.should_not_be_success_message()
+
+def test_guest_cant_see_success_message(browser):
+    page = ProductPage(browser, link)
+    page.open()
+    page.should_not_be_success_message()
+
+@pytest.mark.xfail
+def test_message_disappeared_after_adding_product_to_cart(browser):
+    page = ProductPage(browser, link)
+    page.open()
+    page.add_product_to_cart()
+    page.success_message_should_disappear()
